@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base href="https://api-key-generator.com/">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZEN API Key Generator & Obstacle Course</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+    padding: 20px;
+  }
+  .container {
+    text-align: center;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    width: 100%;
+  }
+  h1 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 3rem;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+    transform: perspective(500px) rotateX(15deg);
+  }
+  h2 {
+    color: #444;
+    margin-bottom: 2rem;
+  }
+  .btn-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    flex: 1 0 calc(25% - 1rem);
+    max-width: 150px;
+  }
+  #chatgpt-btn { background-color: #10a37f; color: white; }
+  #claude-btn { background-color: #6b46c1; color: white; }
+  #llama-btn { background-color: #ff6b6b; color: white; }
+  #palm-btn { background-color: #4285f4; color: white; }
+  #cohere-btn { background-color: #000000; color: white; }
+  #openai-btn { background-color: #412991; color: white; }
+  #anthropic-btn { background-color: #0077b5; color: white; }
+  #huggingface-btn { background-color: #ffad00; color: black; }
+  .btn:hover {
+    opacity: 0.9;
+  }
+  #api-key {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #e9e9e9;
+    border-radius: 5px;
+    font-family: monospace;
+    word-break: break-all;
+  }
+  #obstacle-course {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .test-btn {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s ease;
+  }
+  .test-btn:hover {
+    background-color: #0056b3;
+  }
+  #results {
+    margin-top: 2rem;
+    text-align: left;
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 5px;
+    white-space: pre-wrap;
+  }
+  .loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    border-top-color: #007bff;
+    animation: spin 1s ease-in-out infinite;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>ZEN</h1>
+    <h2>API Key Generator & Obstacle Course</h2>
+    <div class="btn-container">
+      <button id="chatgpt-btn" class="btn">Chat GPT 4.0</button>
+      <button id="claude-btn" class="btn">Claude 3.5 Opus</button>
+      <button id="llama-btn" class="btn">Llama 3.1 405B</button>
+      <button id="palm-btn" class="btn">PaLM 2</button>
+      <button id="cohere-btn" class="btn">Cohere</button>
+      <button id="openai-btn" class="btn">OpenAI</button>
+      <button id="anthropic-btn" class="btn">Anthropic</button>
+      <button id="huggingface-btn" class="btn">Hugging Face</button>
+    </div>
+    <div id="api-key"></div>
+    <h3>ZEN API Obstacle Course</h3>
+    <div id="obstacle-course">
+      <button class="test-btn" data-test="text-completion">Text Completion</button>
+      <button class="test-btn" data-test="sentiment-analysis">Sentiment Analysis</button>
+      <button class="test-btn" data-test="named-entity-recognition">Named Entity Recognition</button>
+      <button class="test-btn" data-test="translation">Translation</button>
+      <button class="test-btn" data-test="summarization">Summarization</button>
+      <button class="test-btn" data-test="question-answering">Question Answering</button>
+      <button class="test-btn" data-test="image-generation">Image Generation</button>
+      <button class="test-btn" data-test="code-generation">Code Generation</button>
+      <button class="test-btn" data-test="text-classification">Text Classification</button>
+      <button class="test-btn" data-test="language-detection">Language Detection</button>
+    </div>
+    <div id="results"></div>
+  </div>
+
+  <script>
+    function generateApiKey(prefix) {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let result = prefix;
+      const length = 48 - prefix.length;
+      for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+      }
+      return result;
+    }
+
+    function displayApiKey(key) {
+      document.getElementById('api-key').textContent = key;
+    }
+
+    const apiButtons = document.querySelectorAll('.btn-container .btn');
+    apiButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const prefix = button.id.split('-')[0].substring(0, 3);
+        const key = generateApiKey(prefix === 'cha' ? 'sk-' : prefix === 'ope' ? 'sk-' : prefix + '-');
+        displayApiKey(key);
+      });
+    });
+
+    async function simulateApiTest(testName, apiKey) {
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = `<div class="loading"></div> Running ${testName}...`;
+
+      const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+      switch (testName) {
+        case 'text-completion':
+          await delay(2000);
+          resultsDiv.innerHTML = `Text Completion Result:<br>API Key: ${apiKey}<br>Input: "The quick brown fox"<br>Output: "The quick brown fox jumps over the lazy dog."`;
+          break;
+        case 'sentiment-analysis':
+          await delay(1500);
+          resultsDiv.innerHTML = `Sentiment Analysis Result:<br>API Key: ${apiKey}<br>Input: "I love this product!"<br>Output: Positive (0.92)`;
+          break;
+        case 'named-entity-recognition':
+          await delay(2500);
+          resultsDiv.innerHTML = `Named Entity Recognition Result:<br>API Key: ${apiKey}<br>Input: "Apple Inc. is headquartered in Cupertino, California."<br>Output: [Apple Inc.: ORG, Cupertino: LOC, California: LOC]`;
+          break;
+        case 'translation':
+          await delay(2000);
+          resultsDiv.innerHTML = `Translation Result:<br>API Key: ${apiKey}<br>Input: "Hello, how are you?" (English)<br>Output: "Hola, ¿cómo estás?" (Spanish)`;
+          break;
+        case 'summarization':
+          await delay(3000);
+          resultsDiv.innerHTML = `Summarization Result:<br>API Key: ${apiKey}<br>Input: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."<br>Output: "A passage about the purpose and benefits of hard work and exercise."`;
+          break;
+        case 'question-answering':
+          await delay(2500);
+          resultsDiv.innerHTML = `Question Answering Result:<br>API Key: ${apiKey}<br>Context: "The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, France."<br>Question: "Where is the Eiffel Tower located?"<br>Answer: "The Eiffel Tower is located in Paris, France."`;
+          break;
+        case 'image-generation':
+          await delay(4000);
+          resultsDiv.innerHTML = `Image Generation Result:<br>API Key: ${apiKey}<br>Prompt: "A futuristic city with flying cars"<br>Output: [Generated image would be displayed here]`;
+          break;
+        case 'code-generation':
+          await delay(2500);
+          resultsDiv.innerHTML = `Code Generation Result:<br>API Key: ${apiKey}<br>Prompt: "Write a Python function to calculate the factorial of a number"<br>Output:<pre>def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    else:
+        return n * factorial(n - 1)</pre>`;
+          break;
+        case 'text-classification':
+          await delay(1800);
+          resultsDiv.innerHTML = `Text Classification Result:<br>API Key: ${apiKey}<br>Input: "This movie was absolutely terrible. I hated every minute of it."<br>Output: Category: Negative Review (Confidence: 0.95)`;
+          break;
+        case 'language-detection':
+          await delay(1500);
+          resultsDiv.innerHTML = `Language Detection Result:<br>API Key: ${apiKey}<br>Input: "Bonjour, comment allez-vous?"<br>Output: Detected Language: French (Confidence: 0.98)`;
+          break;
+        default:
+          resultsDiv.innerHTML = `Unknown test: ${testName}`;
+      }
+    }
+
+    const obstacleButtons = document.querySelectorAll('.test-btn');
+
+    obstacleButtons.forEach(button => {
+      button.addEventListener('click', async () => {
+        const testName = button.dataset.test;
+        const apiKey = document.getElementById('api-key').textContent;
+
+        if (!apiKey) {
+          document.getElementById('results').textContent = 'Please generate an API key first.';
+          return;
+        }
+
+        button.disabled = true;
+        await simulateApiTest(testName, apiKey);
+        button.disabled = false;
+      });
+    });
+  </script>
+</body>
+</html>
